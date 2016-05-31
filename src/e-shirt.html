@@ -13,78 +13,119 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/iron-input/iron-input.html">
 <dom-module id="e-shirt">
 
-  <template>
+    <template>
 
-    <style>
-      /*:host {*/
-        /*display: block;*/
-        /*padding: 10px;*/
-      /*}*/
-      /*.card {*/
-        /*box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);*/
-        /*padding: 16px;*/
-        /*margin: 24px;*/
-        /*border-radius: 5px;*/
-        /*background-color: #fff;*/
-        /*color: #757575;*/
-      /*}*/
-      /*.circle {*/
-        /*display: inline-block;*/
-        /*height: 64px;*/
-        /*width: 64px;*/
-        /*border-radius: 50%;*/
-        /*background: #ddd;*/
-        /*line-height: 64px;*/
-        /*font-size: 30px;*/
-        /*color: #555;*/
-        /*text-align: center;*/
-      /*}*/
-      /*h1 {*/
-        /*font-size: 22px;*/
-        /*margin: 16px 0;*/
-        /*color: #212121;*/
-      /*}*/
-    </style>
+        <style>
+            /*:host {*/
+            /*display: block;*/
+            /*padding: 10px;*/
+            /*}*/
+            .container {
+                border: 2px solid #DDDDDD;
+                position: relative;
+            }
 
-    <div>
-      <paper-input label={{shirt}} bind-value="{{shirt}}"></paper-input>
-      <input is="iron-input" bind-value="{{shirt}}">
-      <img src="/images/shirt_big.png">
-      <canvas id="myCanvas" width="200" height="200">
-      Your browser does not support canvas
-      </canvas>
-    </div>
+            .shirtlabel {
+                float: left;
+                position: absolute;
+                left: 20px;
+                top: 20px;
+                z-index: 1000;
+                resize: both;
+                color: #0a0b0a;
+                font-weight: bold;
+                border: 2px dashed;
+                border-color: #00b0ff;
+                overflow: auto;
+                font-size: 25px;;
+            }
 
-  </template>
+        </style>
 
-  <script>
+        <div>
+            <paper-input label={{shirt}} bind-value="{{shirt}}"></paper-input>
+            <input is="iron-input" bind-value="{{shirt}}">
+            <canvas id="myCanvas" width="200" height="200">
+                Your browser does not support canvas
+            </canvas>
+        </div>
+        <div class="foo" on-drop="drop">fooo</div>
+        <div class="container" draggable="false" on-drop="drop" on-dragover="allowDrop">
+            <div id="shirtlabel" class="shirtlabel" draggable="true" on-dragstart="drag">{{shirt}}</div>
+            <img src="/images/shirt.png">
 
-    Polymer({
+        </div>
+    </template>
 
-      is: 'e-shirt',
-      properties:{
+    <script>
 
-        shirt: {
-          type: String,
-          value: "Your label",
-          reflectAttribute:true,
-          notify: true,
-          observer: "_draw"
-        }
-      },
-      listeners: {
-        'shirt-changed:': '_draw'
-      },
+        Polymer({
 
-      _draw:function(e) {
-        var canvas = this.$.myCanvas;
-        var ctx = canvas.getContext("2d");
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.font = "30px Arial";
-        ctx.fillText(this.shirt,10,50);
-      }
-    });
+            is: 'e-shirt',
+            properties: {
 
-  </script>
+                shirt: {
+                    type: String,
+                    value: "Your label",
+                    reflectAttribute: true,
+                    notify: true,
+                    observer: "_draw"
+                }
+            },
+            xLabel: {},
+            yLabel: {},
+            listeners: {
+                'shirt-changed:': '_draw'
+            },
+
+            _draw: function (e) {
+                var canvas = this.$.myCanvas;
+                var ctx = canvas.getContext("2d");
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.font = "30px Arial";
+                ctx.fillText(this.shirt, 10, 50);
+            },
+            drag: function (e) {
+                var style = window.getComputedStyle(event.target, null);
+                var xOffset = parseInt(style.getPropertyValue("left"), 10) - event.clientX;
+                var yOffset = parseInt(style.getPropertyValue("top"), 10) - event.clientY;
+                var targetId = e.target.id;
+                var offsetData = {"xOffset": xOffset, "yOffset": yOffset, "targetId": targetId};
+                e.dataTransfer.setData("text/plain", JSON.stringify(offsetData));
+            },
+            allowDrop: function (e) {
+                e.preventDefault();
+            },
+            drop: function (e) {
+                var offsetData = JSON.parse(e.dataTransfer.getData("text/plain"));
+                this.$.shirtlabel.style.left = (event.clientX + offsetData.xOffset) + "px";
+                this.$.shirtlabel.style.top = (event.clientY + offsetData.yOffset) + "px";
+                this.xLabel = event.clientX + offsetData.xOffset;
+                this.yLabel = event.clientY + offsetData.yOffset;
+                event.preventDefault();
+            }
+
+        });
+
+
+        //    function drag(event) {
+        //      event.dataTransfer.setData("text", event.target.id);
+        //    }
+        //    function allowDrag(event) {
+        //      event.preventDefault();
+        //    }
+        //
+        //    function drop(event) {
+        //      var container = document.getElementById("container");
+        //      var dragedItem=document.getElementById(event.dataTransfer.getData("text"));
+        //      var parent  = this;
+        //      container.insertBefore(dragedItem,parent);
+        //    }
+        //
+        //    layoutDiv.draggable=true;
+        //    layoutDiv.addEventListener("dragstart",drag,false);
+        //    layoutDiv.addEventListener("dragover", allowDrag,false);
+        //    layoutDiv.addEventListener("drop",drop,false);
+    </script>
 
 </dom-module>
