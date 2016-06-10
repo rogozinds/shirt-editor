@@ -45,15 +45,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <div>
             <paper-input label={{shirt}} bind-value="{{shirt}}"></paper-input>
             <input is="iron-input" bind-value="{{shirt}}">
-            <canvas id="myCanvas" width="200" height="200">
-                Your browser does not support canvas
-            </canvas>
         </div>
-        <div class="foo" on-drop="drop">fooo</div>
         <div class="container" draggable="false" on-drop="drop" on-dragover="allowDrop">
-            <div id="shirtlabel" class="shirtlabel" draggable="true" on-dragstart="drag">{{shirt}}</div>
-            <img src="/images/shirt.png">
 
+            <div id="shirtlabel" class="shirtlabel" draggable="true" on-dragstart="drag">
+                {{shirt}}
+            </div>
+            <img src="/images/shirt.png">
         </div>
     </template>
 
@@ -68,23 +66,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                     type: String,
                     value: "Your label",
                     reflectAttribute: true,
-                    notify: true,
-                    observer: "_draw"
-                }
-            },
-            xLabel: {},
-            yLabel: {},
-            listeners: {
-                'shirt-changed:': '_draw'
+                    notify: true
+                },
+                xLabel: {},
+                yLabel: {}
             },
 
-            _draw: function (e) {
-                var canvas = this.$.myCanvas;
-                var ctx = canvas.getContext("2d");
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                ctx.font = "30px Arial";
-                ctx.fillText(this.shirt, 10, 50);
-            },
+
+
             drag: function (e) {
                 var style = window.getComputedStyle(event.target, null);
                 var xOffset = parseInt(style.getPropertyValue("left"), 10) - event.clientX;

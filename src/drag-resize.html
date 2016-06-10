@@ -11,41 +11,28 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../bower_components/iron-input/iron-input.html">
+<link rel="import" href="drag-handler.html">
+<link rel="import" href="rotate-handler.html">
 <dom-module id="drag-resize">
 
     <template>
         <style>
             :host {
+                position:absolute;
 
              }
-            .resize-handler {
-                position:absolute;
-                width: 5px;
-                height: 5px;
-                font-size: 1px;
-                background: rgb(250, 0,3);
-                -webkit-transition: all 0.1s linear;
-                transition: all 0.1s linear;
-                opacity: 1;
-
-            }
-            ::content * {
-                background-color: green;
-            }
-            .resize-handler.tl {
-                top: 0px;
-                left: -5px;
-                cursor: nw-resize;
-            }
-            /*.resize-handler.bl {*/
-                /*bottom: 0px;*/
-                /*left: -5px;*/
-                /*cursor: nw-resize;*/
-            /*}*/
         </style>
 
-        <content id="content"></content>
-        <div class="resize-handler tl"></div>
+
+        <drag-handler top-left></drag-handler>
+        <drag-handler top-right></drag-handler>
+        <drag-handler bottom-left></drag-handler>
+        <drag-handler bottom-right></drag-handler>
+        <rotate-handler top-middle></rotate-handler>
+
+        <content class="content"></content>
+
+        <!--<drag-handler position="tr"></drag-handler>-->
     </template>
 
     <script>
@@ -54,10 +41,64 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
             is: 'drag-resize',
             properties: {
+                startX:{
+                    type:Number
+                },
+                startY: {
+                    type:Number
+                },
+                startWidth:{
+                    type:Number
+                },
+                startHeight:{
+                    type:Number
+                }
             },
-            ready: function() {
-                var distributed = this.getContentChildren('#content');
-                console.log(distributed.length);
+            attached: function() {
+                var foo=this.getContentChildren('.content');
+//                debugger;
+                console.log(foo[0].clientWidth);
+                console.log(foo[0].clientHeight);
+//                var distributed = this.getContentChildren('#content');
+//                console.log(distributed.length);
+//                Polymer.dom(contentElement).getDistributedNodes()
+                this.listen(this,'tap', 'doDrag');
+                this.listen(this,'track','doDrag');
+            },
+            listeners: {
+            //  'tap':'regularTap'
+            },
+            doDrag: function(e) {
+                var startWidth=30;
+                var startX=30;
+                var startHeight=40;
+                var startY=40;
+                this.style.width = (startWidth + e.detail.x - startX) + 'px';
+                this.style.height = (startHeight + e.detail.y - startY) + 'px';
+                var content=this.getContentChildren('.content');
+                content[0].style.width = (startWidth + e.detail.x - startX) + 'px';
+                content[0].style.height = (startHeight + e.detail.y - startY) + 'px';
+            },
+            regularTap: function(e) {
+                this.style.width = 400 + 'px';
+                this.style.height = 300 + 'px';
+                var content=this.getContentChildren('.content');
+                content[0].style.width = 400 + 'px';
+                content[0].style.height = 300 + 'px';
+            },
+            handleTrack: function(e) {
+                switch(e.detail.state) {
+                    case 'start':
+                        this.message = 'Tracking started!';
+                        break;
+                    case 'track':
+                        this.message = 'Tracking in progress... ' +
+                                e.detail.x + ', ' + e.detail.y;
+                        break;
+                    case 'end':
+                        this.message = 'Tracking ended!';
+                        break;
+                }
             }
 
         });

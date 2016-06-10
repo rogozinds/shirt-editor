@@ -1,0 +1,105 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/iron-input/iron-input.html">
+<dom-module id="drag-handler">
+
+    <template>
+        <style>
+
+            :host([top-left]) .handler {
+                top: -5px;
+                left: -5px;
+                cursor: se-resize;
+            }
+            :host([top-right]) .handler {
+                top: -5px;
+                right: -5px;
+                cursor: sw-resize;
+            }
+            :host([bottom-left]) .handler {
+                bottom: -5px;
+                left: -5px;
+                cursor: sw-resize;
+            }
+            :host([bottom-right]) .handler {
+                bottom: -5px;
+                right: -5px;
+                cursor: sw-resize;
+            }
+            .handler {
+                position:absolute;
+                width: 5px;
+                height: 5px;
+                font-size: 1px;
+                background: rgb(250, 0,3);
+                -webkit-transition: all 0.1s linear;
+                transition: all 0.1s linear;
+                opacity: 1;
+
+            }
+
+        </style>
+        <div class="handler"></div>
+    </template>
+
+    <script>
+
+        Polymer({
+
+            is: 'drag-handler',
+            properties: {
+                startX:{
+                  type:Number
+                },
+                startY: {
+                    type:Number
+                },
+                startWidth:{
+                    type:Number
+                },
+                startHeight:{
+                  type:Number
+                },
+                position: {
+                    type:String,
+                    reflectToAttribute:true
+                }
+            },
+            listeners: {
+                'tap':'initDrag'
+            },
+            initDrag: function(e) {
+//                this.parent.startX = e.clientX;
+//                this.parent.startY = e.clientY;
+//                this.parent.startWidth = parseInt(document.defaultView.getComputedStyle(this).width, 10);
+//                this.parent.startHeight = parseInt(document.defaultView.getComputedStyle(this).height, 10);
+//                this.listen(this,'track','doDrag');
+//                this.listen(this,'mouseup','stopDrag');
+            },
+            doDrag(e){
+                console.log("do drag"+ e.clientX);
+                this.parent.style.width = (startWidth + e.clientX - startX) + 'px';
+                this.parent.style.height = (startHeight + e.clientY - startY) + 'px';
+
+                content[0].style.width = (startWidth + e.clientX - startX) + 'px';
+                content[0].style.height = (startHeight + e.clientY - startY) + 'px';
+            },
+            stopDrag(e) {
+                this.unlisten(this,'mousemove',doDrag);
+                this.unlisten(this,'mouseup',stopDrag);
+            }
+
+        });
+    </script>
+
+</dom-module>
