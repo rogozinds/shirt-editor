@@ -20,7 +20,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../bower_components/iron-selector/iron-selector.html">
 <link rel="import" href="my-icons.html">
-
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
+<link rel="import" href="task-item.html">
+<link rel="import" href="task-details.html">
 <dom-module id="my-app">
 
   <template>
@@ -59,8 +63,26 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         padding-left: 32px;
       }
 
+      paper-item {
+        --paper-item: {
+          cursor: pointer;
+        };
+      }
+
+      .sublist {
+        padding-left: 20px;
+        padding-right: 20px;
+
+      }
 
     </style>
+
+    <iron-ajax
+            auto
+            url="http://test.test:3300/api/tasklist"
+            last-response="{{ajaxResponse}}"
+            debounce-duration="300"></iron-ajax>
+
 
     <app-location route="{{route}}"></app-location>
     <app-route
@@ -74,11 +96,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <!-- Drawer content -->
       <app-drawer>
         <app-toolbar>Menu</app-toolbar>
-        <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
-          <a name="view1" href="/view1">View One</a>
-          <a name="view2" href="/view2">View Two</a>
-          <a name="view3" href="/view3">View Three</a>
-        </iron-selector>
+        <paper-listbox on-iron-select="taskSelected">
+          <template is="dom-repeat" items="[[ajaxResponse]]">
+            <paper-item id$={{item.id}}>{{item.task}}</paper-item>
+          </template>
+        </paper-listbox>
       </app-drawer>
 
       <!-- Main content -->
@@ -90,16 +112,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             <div title>My App</div>
           </app-toolbar>
         </app-header>
-
-        <iron-pages role="main" selected="[[page]]" attr-for-selected="name">
-          <my-view1 name="view1"></my-view1>
-          <my-view2 name="view2"></my-view2>
-          <my-view3 name="view3"></my-view3>
-        </iron-pages>
-
+        <task-details taskId={{taskid}}></task-details>
       </app-header-layout>
 
     </app-drawer-layout>
+
 
   </template>
 
@@ -116,22 +133,28 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           reflectToAttribute: true,
           observer: '_pageChanged'
         },
+        taskid: {
+          type:Number,
+          value:1
+        }
 
       },
 
-      observers: [
-        '_routePageChanged(routeData.page)'
-      ],
-
+//      observers: [
+//        '_routePageChanged(routeData.page)'
+//      ],
+      taskSelected: function(target, e) {
+        this.taskid= e.item.id;
+      },
       _routePageChanged: function(page) {
         this.page = page || 'view1';
       },
 
-      _pageChanged: function(page) {
-        // load page import on demand.
-        this.importHref(
-          this.resolveUrl('my-' + page + '.html'), null, null, true);
-      }
+//      _pageChanged: function(page) {
+//        // load page import on demand.
+//        this.importHref(
+//          this.resolveUrl('my-' + page + '.html'), null, null, true);
+//      }
 
     });
 

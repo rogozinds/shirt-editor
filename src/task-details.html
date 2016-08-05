@@ -11,7 +11,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="e-shirt.html">
 <link rel="import" href="drag-resize.html">
-<dom-module id="my-view1">
+<dom-module id="task-details">
 
   <template>
 
@@ -45,35 +45,30 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         color: #212121;
       }
     </style>
-    <drag-resize>
-      <div>FOo bar dude</div>
-    </drag-resize>
+    <iron-ajax
+            auto
+            url="http://localhost:3300/api/tasks/{{taskid}}"
+            last-response="{{ajaxResponse}}"
+            onResponse="handleResponse"
+            debounce-duration="100"></iron-ajax>
 
-    <drag-resize>
-      <img src="/images/pic1.png">
-    </drag-resize>
-    <!--<drag-resize> Some text-->
-      <!--<div>FOo</div>-->
-    <!--</drag-resize>-->
-
-
-    <!--<div class="card">-->
-      <!--<div class="circle">1</div>-->
-      <!--<h1>View One</h1>-->
-      <!--<p>Ut labores minimum atomorum pro. Laudem tibique ut has.-->
-      <!--<p>Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea.Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea.Cu mei vide viris gloriatur, at populo eripuit sit.</p>-->
-    <!--</div>-->
-    <!--<e-shirt></e-shirt>-->
-
-
+      <div>{{ajaxResponse.time}}</div>
+      <div>{{ajaxResponse.task}}</div>
   </template>
 
   <script>
 
     Polymer({
 
-      is: 'my-view1'
-
+      is: 'task-details',
+      properties: {
+        taskid: {
+          type: String
+        }
+      },
+      handleResponse:function(e) {
+        console.log("FOOO");
+      }
     });
 
   </script>
