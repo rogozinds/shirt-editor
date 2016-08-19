@@ -11,66 +11,84 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="e-shirt.html">
 <link rel="import" href="drag-resize.html">
+<link rel="import"
+      href="../bower_components/vaadin-date-picker/vaadin-date-picker.html">
+<link rel="import" href="task-editor.html">
 <dom-module id="task-details">
 
-  <template>
+    <template>
 
-    <style>
-      :host {
-        display: block;
-        padding: 10px;
-      }
-      .card {
-        box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
-        padding: 16px;
-        margin: 24px;
-        border-radius: 5px;
-        background-color: #fff;
-        color: #757575;
-      }
-      .circle {
-        display: inline-block;
-        height: 64px;
-        width: 64px;
-        border-radius: 50%;
-        background: #ddd;
-        line-height: 64px;
-        font-size: 30px;
-        color: #555;
-        text-align: center;
-      }
-      h1 {
-        font-size: 22px;
-        margin: 16px 0;
-        color: #212121;
-      }
-    </style>
-    <iron-ajax
-            auto
-            url="http://localhost:3300/api/tasks/{{taskid}}"
-            last-response="{{ajaxResponse}}"
-            onResponse="handleResponse"
-            debounce-duration="100"></iron-ajax>
+        <style>
+            :host {
+                display: block;
+                padding: 10px;
+            }
 
-      <div>{{ajaxResponse.time}}</div>
-      <div>{{ajaxResponse.task}}</div>
-  </template>
+            .card {
+                box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+                padding: 16px;
+                margin: 24px;
+                border-radius: 5px;
+                background-color: #fff;
+                color: #757575;
+            }
 
-  <script>
+            .circle {
+                display: inline-block;
+                height: 64px;
+                width: 64px;
+                border-radius: 50%;
+                background: #ddd;
+                line-height: 64px;
+                font-size: 30px;
+                color: #555;
+                text-align: center;
+            }
 
-    Polymer({
+            h1 {
+                font-size: 22px;
+                margin: 16px 0;
+                color: #212121;
+            }
+        </style>
+        <iron-ajax
+                auto
+                url="http://localhost:3300/api/tasks/{{taskid}}"
+                last-response="{{ajaxResponse}}"
+                onResponse="handleResponse"
+                debounce-duration="100"></iron-ajax>
 
-      is: 'task-details',
-      properties: {
-        taskid: {
-          type: String
-        }
-      },
-      handleResponse:function(e) {
-        console.log("FOOO");
-      }
-    });
+        <h2>{{ajaxResponse.task}}</h2>
+        <vaadin-date-picker value={{ajaxResponse.started}}></vaadin-date-picker>
+        <vaadin-date-picker
+                value={{ajaxResponse.expectedEnd}}></vaadin-date-picker>
+        <task-editor id="taskEditor" merchants="[[merchants]]" db="[[_db]]" route="{{subroute}}"></task-editor>
+    </template>
 
-  </script>
+    <script>
+
+        Polymer({
+
+            is: 'task-details',
+            properties: {
+                taskid: {
+                    type: String
+                }
+            },
+            handleResponse: function (e) {
+                console.log("FOOO");
+            },
+            listeners: {
+                'edit-task': '_editTask',
+            },
+            _editTask: function (e) {
+            if (e && e.detail) {
+              //if taskId=null then add, otherwise edit
+              this.$.taskEditor.open(e.detail.taskId);
+            }
+            },
+        });
+
+    </script>
 
 </dom-module>

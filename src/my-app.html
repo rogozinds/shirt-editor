@@ -23,8 +23,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
 <link rel="import" href="../bower_components/paper-item/paper-item.html">
-<link rel="import" href="task-item.html">
+<link rel="import" href="../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="task-details.html">
+
 <dom-module id="my-app">
 
   <template>
@@ -74,6 +76,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         padding-right: 20px;
 
       }
+      #add-button {
+        right: 32px;
+        float:right;
+        z-index: 2;
+      }
 
     </style>
 
@@ -101,6 +108,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             <paper-item id$={{item.id}}>{{item.task}}</paper-item>
           </template>
         </paper-listbox>
+        <paper-fab icon="add" on-tap="_addNewTask" id="add-button"></paper-fab>
       </app-drawer>
 
       <!-- Main content -->
@@ -135,26 +143,23 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         },
         taskid: {
           type:Number,
-          value:1
+          value:0
         }
 
       },
 
-//      observers: [
-//        '_routePageChanged(routeData.page)'
-//      ],
       taskSelected: function(target, e) {
         this.taskid= e.item.id;
       },
       _routePageChanged: function(page) {
         this.page = page || 'view1';
       },
-
-//      _pageChanged: function(page) {
-//        // load page import on demand.
-//        this.importHref(
-//          this.resolveUrl('my-' + page + '.html'), null, null, true);
-//      }
+      _addNewTask: function() {
+        this.$$("task-details").fire('edit-task',
+                {
+                  taskId:null,
+                });
+      }
 
     });
 

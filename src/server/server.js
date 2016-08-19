@@ -13,17 +13,23 @@ var     data = [
     {
         "id" : "0",
         "task": "Make America great again",
-        "time": "Two weeks00"
+        "expectedTime": "Two weeks00",
+        "started": "2016-03-12",
+        "expectedEnd": "2016-08-12"
     },
     {
         "id"  : "1",
         "task":"Save the world",
-        "time":"Three weeks"
+        "expectedTime":"Three weeks",
+        "started": "2016-03-05",
+        "expectedEnd": "2016-08-12"
     },
     {
         "id" : "2",
         "task":"Foo bar",
-        "time":"Three weeks"
+        "expectedTime":"Three weeks",
+        "started": "2016-03-05",
+        "expectedEnd": "2016-08-12"
     }
 ]
 
