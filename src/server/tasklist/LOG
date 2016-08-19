@@ -1,0 +1,13 @@
+2016/08/19-16:24:01.184552 7fd5ca7fc700 Recovering log #12
+2016/08/19-16:24:01.184614 7fd5ca7fc700 Level-0 table #14: started
+2016/08/19-16:24:01.197551 7fd5ca7fc700 Level-0 table #14: 237 bytes OK
+2016/08/19-16:24:01.235966 7fd5ca7fc700 Delete type=3 #10
+2016/08/19-16:24:01.236005 7fd5ca7fc700 Delete type=0 #12
+2016/08/19-16:24:01.236188 7fd5c9ffb700 Compacting 4@0 + 0@1 files
+2016/08/19-16:24:01.254552 7fd5c9ffb700 Generated table #16: 1 keys, 237 bytes
+2016/08/19-16:24:01.254570 7fd5c9ffb700 Compacted 4@0 + 0@1 files => 237 bytes
+2016/08/19-16:24:01.271585 7fd5c9ffb700 compacted to: files[ 0 1 0 0 0 0 0 ]
+2016/08/19-16:24:01.271707 7fd5c9ffb700 Delete type=2 #5
+2016/08/19-16:24:01.271817 7fd5c9ffb700 Delete type=2 #11
+2016/08/19-16:24:01.271865 7fd5c9ffb700 Delete type=2 #14
+2016/08/19-16:24:01.271905 7fd5c9ffb700 Delete type=2 #8
