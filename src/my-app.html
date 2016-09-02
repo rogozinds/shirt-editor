@@ -105,7 +105,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <app-toolbar>Menu</app-toolbar>
         <paper-listbox on-iron-select="taskSelected">
           <template is="dom-repeat" items="[[ajaxResponse]]">
-            <paper-item id$={{item.id}}>{{item.task}}</paper-item>
+            <paper-item id$={{item.doc._id}}>{{item.doc.task}}</paper-item>
           </template>
         </paper-listbox>
         <paper-fab icon="add" on-tap="_addNewTask" id="add-button"></paper-fab>
@@ -143,7 +143,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         },
         taskid: {
           type:Number,
-          value:0
+          value:"c6cbc8e6386a2fcb64c7c93b49000eb7"
         }
 
       },
@@ -155,10 +155,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         this.page = page || 'view1';
       },
       _addNewTask: function() {
-        this.$$("task-details").fire('edit-task',
-                {
-                  taskId:null,
-                });
+        this.$$("task-details").fire('edit-task', null);
       }
 
     });

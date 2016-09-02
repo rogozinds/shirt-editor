@@ -10,52 +10,31 @@ var PouchDB = require('pouchdb');
 var port = process.env.PORT || 3300;        // set our port
 //This is a dummy data should be normal db, right now just in memory
 var db = new PouchDB('http://localhost:5984/tasklist');
-
-var     data = [
-    {
-        "id" : "0",
-        "task": "Make America great again",
-        "expectedTime": "Two weeks00",
-        "started": "2016-03-12",
-        "expectedEnd": "2016-08-12"
-    },
-    {
-        "id"  : "1",
-        "task":"Save the world",
-        "expectedTime":"Three weeks",
-        "started": "2016-03-05",
-        "expectedEnd": "2016-08-12"
-    },
-    {
-        "id" : "2",
-        "task":"Foo bar",
-        "expectedTime":"Three weeks",
-        "started": "2016-03-05",
-        "expectedEnd": "2016-08-12"
-    }
-]
-
-
+var bodyParser = require('body-parser');
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+var router = express.Router();              // get an instance of the express Router
+// REGISTER OUR ROUTES -------------------------------
+// all of our routes will be prefixed with /api
+app.use('/api', router);
 
 // ROUTES FOR OUR API
 // =============================================================================
-var router = express.Router();              // get an instance of the express Router
+// Get all tasks
 router.get('/tasklist', function(req, res) {
     res.setHeader("Access-Control-Allow-Origin", "*");
     res.setHeader("Access-Control-Allow-Methods","GET,POST,PUT,DELETE,OPTIONS");
     res.setHeader("Access-Control-Allow-Headers","Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
     db.allDocs({include_docs: true, descending: true}, function(err, doc) {
-        console.log(doc.rows);
         res.json(doc.rows);
     });
 });
-
+//Get task info
 router.get('/tasks/:taskId', function(req,res){
     res.setHeader("Access-Control-Allow-Origin", "*");
     res.setHeader("Access-Control-Allow-Methods","GET,POST,PUT,DELETE,OPTIONS");
     res.setHeader("Access-Control-Allow-Headers","Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
     //search in DB by ID
-    console.log("GOT REQUEST");
     var id =req.params['taskId'];
     db.get(id).then(function(result) {
         res.send(result);
@@ -64,30 +43,55 @@ router.get('/tasks/:taskId', function(req,res){
     });
 
 })
-var bodyParser = require('body-parser');
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+
+//Add task
 router.post('/tasks/add', function(req,res){
     res.setHeader("Access-Control-Allow-Origin", "*");
     res.setHeader("Access-Control-Allow-Methods","GET,POST,PUT,DELETE,OPTIONS");
     res.setHeader("Access-Control-Allow-Headers","Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
     //search in DB by ID
     var task=req.body;
-    db.post(task).then(function (doc) {
+    var returnDoc=null;
+    db.get(task._id)
+    .then(function(doc) {
+      //get all properties from task and put them to doc
+      returnDoc = db.put(doc);
     }).catch(function (err) {
-        console.log(err);
+        if(err.status=='404') {
+            db.put(doc,
+                doc._id,
+                doc._rev
+            ).then(function(response){
+                returnDoc=response;
+            }).catch(function(err){
+                returnDoc=null;
+                console.log(err);
+            })
+        }
     });
     res.end();
 })
 
+//delete task
+router.post('/task/delete',function(req,res){
+    console.log("DELETE");
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Methods","GET,POST,PUT,DELETE,OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers","Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
-// REGISTER OUR ROUTES -------------------------------
-// all of our routes will be prefixed with /api
-app.use('/api', router);
+    //search in DB by ID
+    var task=req.body;
+    db.get(task._id)
+        .then(function (doc) {
+            return db.remove(doc);
+        });
+    res.end();
+})
 
+
+
+console.log('Magic happens on port ' + port);
 // START THE SERVER
 // =============================================================================
 app.listen(port);
-console.log('Magic happens on port ' + port);
-
 

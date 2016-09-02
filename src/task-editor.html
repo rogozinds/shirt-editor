@@ -4,13 +4,17 @@
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../bower_components/paper-input/paper-textarea.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
-<link rel="import" href="../bower_components/iron-a11y-keys/iron-a11y-keys.html">
+<link rel="import"
+      href="../bower_components/iron-a11y-keys/iron-a11y-keys.html">
 <link rel="import" href="../bower_components/iron-icons/iron-icons.html">
-<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
-<link rel="import" href="../bower_components/vaadin-date-picker/vaadin-date-picker.html">
-<link rel="import" href="../bower_components/iron-media-query/iron-media-query.html">
+<link rel="import"
+      href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import"
+      href="../bower_components/vaadin-date-picker/vaadin-date-picker.html">
+<link rel="import"
+      href="../bower_components/iron-media-query/iron-media-query.html">
 <link rel="import" href="../bower_components/app-route/app-route.html">
-
+<script src="../bower_components/jquery/dist/jquery.js"></script>
 <dom-module id="task-editor">
     <template>
         <style>
@@ -25,44 +29,55 @@
                 /* Keep overflow visible so vaadin-date-picker dropdown won't clip */
                 overflow: visible;
             }
+
             .main-layout {
                 display: flex;
                 flex-direction: row;
             }
+
             .flex {
                 flex: 1;
             }
+
             .form {
                 flex: 2;
             }
-            #form> * {
+
+            #form > * {
                 margin-bottom: 8px;
             }
+
             .buttons-layout {
                 display: flex;
                 flex-direction: row;
                 margin-top: 16px;
             }
+
             .buttons-layout paper-button {
                 width: 150px;
             }
+
             .save-button {
                 background: var(--primary-color);
                 color: var(--text-primary-color);
             }
+
             .cancel-button {
                 color: var(--primary-color);
             }
+
             .main-layout h2 {
                 font-size: 24px !important;
                 font-weight: 300 !important;
             }
+
             .receipt {
                 flex: 3;
                 margin-left: 24px;
                 min-height: 64px;
                 max-width: 400px;
             }
+
             .receipt .receipt-wrapper {
                 max-width: 100%;
                 display: block;
@@ -70,65 +85,82 @@
                 max-height: 50vh;
                 overflow-y: scroll;
             }
+
             .receipt-wrapper img {
                 width: 100%;
             }
+
             .receipt img[hidden] {
                 display: none;
             }
+
             paper-button[hidden] {
                 display: none;
             }
+
             div[prefix] {
                 margin-right: 6px;
             }
+
             #error {
                 color: red;
             }
-            :host> .wrapper {
+
+            :host > .wrapper {
                 height: 100%;
                 width: 100%;
                 padding: 0;
             }
+
             .close-button {
                 color: var(--dark-primary-color);
             }
+
             .delete-button {
                 margin-left: auto;
                 color: var(--text-primary-color);
                 background: var(--accent-color);
             }
+
             form::content label {
                 font-weight: bold !important;
                 color: #999 !important;
             }
+
             .wrapper {
                 display: flex;
             }
+
             @media (min-width: 900px) {
                 #dialog {
                     display: flex;
                     flex-direction: column;
                 }
+
                 .wrapper {
                     flex-direction: row;
                     overflow: auto;
                 }
             }
+
             @media (max-width: 900px) {
                 .receipt {
                     margin: 24px 0 0 0;
                 }
+
                 .wrapper {
                     flex-direction: column;
                 }
+
                 .receipt {
                     width: 100%;
                     margin: 40px auto;
                 }
+
                 .receipt .receipt-wrapper {
                     max-height: inherit;
                 }
+
                 #dialog {
                     width: 100vw;
                     min-height: 100vh;
@@ -138,48 +170,74 @@
             }
         </style>
 
-        <app-route route="{{route}}" pattern="/:action" data="{{routeData}}"></app-route>
+        <app-route route="{{route}}" pattern="/:action"
+                   data="{{routeData}}"></app-route>
 
-        <iron-media-query query="(min-height: 900px)" query-matches="{{tallWindow}}"></iron-media-query>
-        <paper-dialog id="dialog" no-cancel-on-esc-key="false" opened="{{opened}}">
+        <iron-media-query query="(min-height: 900px)"
+                          query-matches="{{tallWindow}}"></iron-media-query>
+        <paper-dialog id="dialog" no-cancel-on-esc-key="false"
+                      opened="{{opened}}">
             <div class="main-layout">
                 <h2>{{caption}}</h2>
                 <span class="flex"></span>
-                <paper-icon-button icon="close" on-tap="close" class="close-button self-start"></paper-icon-button>
+                <paper-icon-button icon="close" on-tap="close"
+                                   class="close-button self-start"></paper-icon-button>
             </div>
 
             <div class="wrapper">
                 <div class="form">
-                    <form is="iron-form" id="form">
-                        <iron-a11y-keys keys="enter" on-keys-pressed="_save"></iron-a11y-keys>
-                        <paper-input name="Task" id="total" value="{{task.task}}" type="string" label="Description" required>
+                    <form is="iron-form" id="form" method="post"
+                          action="http://localhost:3300/api/tasks/add">
+                        <iron-a11y-keys keys="enter"
+                                        on-keys-pressed="_save"></iron-a11y-keys>
+                        <paper-input name="_id" value="{{task._id}}" type="String"></paper-input>
+                        <paper-input name="task" id="total"
+                                     value="{{task.task}}" type="string"
+                                     label="Description" required>
                             <div prefix>$</div>
                         </paper-input>
 
-                        <vaadin-date-picker label="Stating date" value="{{task.started}}" id="startDate" name="date" required></vaadin-date-picker>
-                        <vaadin-date-picker label="Ending date" value="{{task.expectedEnd}}" id="endDate" name="date" required></vaadin-date-picker>
-                        <paper-textarea id="comment" name="comment" label="Comment" value="{{expense.comment}}"></paper-textarea>
+                        <vaadin-date-picker name="started" label="Stating date"
+                                            value="{{task.started}}"
+                                            id="startDate"
+                                            required></vaadin-date-picker>
+                        <vaadin-date-picker name="expectedEnd"
+                                            label="Ending date"
+                                            value="{{task.expectedEnd}}"
+                                            id="endDate"
+                                            required></vaadin-date-picker>
+                        <paper-textarea id="comment" name="comment"
+                                        label="Comment"
+                                        value="{{expense.comment}}"></paper-textarea>
                     </form>
                 </div>
             </div>
             <div class="buttons-layout">
-                <paper-button raised on-tap="_save" class="save-button">Save</paper-button>
-                <paper-button on-tap="close" class="cancel-button">Cancel</paper-button>
-                <paper-button on-tap="_delete" id="delete" class="delete-button">Delete</paper-button>
+                <paper-button raised on-tap="_save" class="save-button">Save
+                </paper-button>
+                <paper-button on-tap="close" class="cancel-button">Cancel
+                </paper-button>
+                <paper-button on-tap="_delete" id="delete"
+                              class="delete-button">Delete
+                </paper-button>
             </div>
             <span id="error" hidden$="[[!errorMessage]]">{{errorText}}</span>
         </paper-dialog>
     </template>
 
     <script>
-        (function() {
+        (function () {
             'use strict';
             Polymer({
                 is: 'task-editor',
                 properties: {
+                    task: {
+                      type: Object,
+                      value: null
+                    },
                     opened: {
                         type: Boolean,
-                        value:false
+                        value: false
                     },
                     service: Object,
 
@@ -191,20 +249,20 @@
                     route: Object,
                     routeData: Object
                 },
-                attached: function() {
+                attached: function () {
                     this._boundOnResize = this._onResize.bind(this);
                     window.addEventListener('resize', this._boundOnResize);
                 },
-                detached: function() {
+                detached: function () {
                     window.removeEventListener('resize', this._boundOnResize);
                 },
-                _onResize: function() {
+                _onResize: function () {
                     this.$.dialog.notifyResize();
                 },
-                _showDialog: function() {
+                _showDialog: function () {
                     return this.expense && this.route.path && this.route.path === '/edit';
                 },
-                _getCaption: function(task) {
+                _getCaption: function (task) {
                     if (task) {
                         return 'Edit Task';
                     } else {
@@ -213,27 +271,28 @@
                 },
 
                 listeners: {
-                    'iron-form-invalid': '_formInvalid'
+                    'iron-form-invalid': '_formInvalid',
+                    'delete-task':'deleteTask'
                 },
 
-                _save: function() {
+                _save: function () {
                     this.$.error.innerText = '';
                     var form = this.$.form;
-                    if (form.validate()) {
-                        this.expense.total = parseFloat(this.expense.total);
-                        this.fire('expense-saved', this.expense);
-                    } else {
-                        console.log('Form validation failed');
-                        this.$.dialog.scrollTop = 0;
-                        this.errorText = 'Please fill all required fields';
-                    }
+                    form.submit();
+                    this.opened = false;
+//                    if (form.validate()) {
+//
+//
+//                    } else {
+//                        console.log('Form validation failed');
+//                        this.$.dialog.scrollTop = 0;
+//                        this.errorText = 'Please fill all required fields';
+//                    }
                 },
-                open: function(taskId) {
-                    this.opened=true;
-                    console.log(taskId);
-                    if(taskId == null) {
-                        this.task=null;
-                    }
+                open: function (task) {
+                    this.opened = true;
+                    console.log(task);
+                    this.task = task;
 //                    // Create a copy of the expense to be edited so we don't automatically flush changes to db
 //                    this.expense = JSON.parse(JSON.stringify(expense));
 //                    // File objects don't survive the JSON dance, so copy that over manually
@@ -254,16 +313,28 @@
 //                    });
 //                    this.set('route.path', '/edit');
                 },
-                close: function() {
+                close: function () {
                     var _this = this;
-                    this.async(function() {
+                    this.async(function () {
                         // Prevent tap from leaking through to underlying page
                         _this.set('route.path', '');
                         _this.expense = {};
                     }, 100);
+                    this.opened = false;
                 },
-                _delete: function() {
-                    this.fire('delete-expense', this.expense);
+                deleteTask: function(e) {
+                    $.ajax({
+                        url: 'http://localhost:3300/api/task/delete',
+                        type: 'POST',
+                        data: e.detail,
+                        success: function(){
+                            console.log("Deleted ");
+                        }
+                    });
+                    this.opened = false;
+                },
+                _delete: function () {
+                    this.fire('delete-task', this.task);
                 }
             });
         })();

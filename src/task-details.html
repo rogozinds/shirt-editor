@@ -11,8 +11,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="e-shirt.html">
 <link rel="import" href="drag-resize.html">
+<link rel="import" href="../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
 <link rel="import"
       href="../bower_components/vaadin-date-picker/vaadin-date-picker.html">
+
 <link rel="import" href="task-editor.html">
 <dom-module id="task-details">
 
@@ -62,7 +65,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <vaadin-date-picker value={{ajaxResponse.started}}></vaadin-date-picker>
         <vaadin-date-picker
                 value={{ajaxResponse.expectedEnd}}></vaadin-date-picker>
-        <task-editor id="taskEditor" merchants="[[merchants]]" db="[[_db]]" route="{{subroute}}"></task-editor>
+
+        <paper-fab icon="create" on-tap="_editTask"
+                   id="edit-button"></paper-fab>
+        <task-editor id="taskEditor" merchants="[[merchants]]" db="[[_db]]"
+                     route="{{subroute}}"></task-editor>
     </template>
 
     <script>
@@ -73,19 +80,39 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             properties: {
                 taskid: {
                     type: String
+                },
+                task: {
+                    type: Object,
+                    computed: 'computeTask(ajaxResponse)'
+                }
+            },
+            computeTask: function(ajaxResponse) {
+                console.log("Computed called");
+                var task = ajaxResponse;
+                if(task) {
+                    task._id = this.taskid;
+                    return task;
+                } else {
+                    return null;
                 }
             },
             handleResponse: function (e) {
                 console.log("FOOO");
             },
             listeners: {
-                'edit-task': '_editTask',
+                'edit-task': 'editTask'
             },
-            _editTask: function (e) {
-            if (e && e.detail) {
-              //if taskId=null then add, otherwise edit
-              this.$.taskEditor.open(e.detail.taskId);
+
+            editTask: function (e) {
+                if (e && e.detail) {
+                        this.$.taskEditor.open(e.detail);
+                    } else {
+                        this.$.taskEditor.open(null);
+                    }
             }
+            ,
+            _editTask: function (e) {
+                this.fire("edit-task", this.task);
             },
         });
 
