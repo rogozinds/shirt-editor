@@ -46,7 +46,9 @@
             #form > * {
                 margin-bottom: 8px;
             }
-
+            #task_id {
+                display:none;
+            }
             .buttons-layout {
                 display: flex;
                 flex-direction: row;
@@ -190,7 +192,7 @@
                           action="http://localhost:3300/api/tasks/add">
                         <iron-a11y-keys keys="enter"
                                         on-keys-pressed="_save"></iron-a11y-keys>
-                        <paper-input name="_id" value="{{task._id}}" type="String"></paper-input>
+                        <input id="task_id" name="_id" value="{{task._id}}" type="String">
                         <paper-input name="task" id="total"
                                      value="{{task.task}}" type="string"
                                      label="Description" required>
@@ -208,7 +210,7 @@
                                             required></vaadin-date-picker>
                         <paper-textarea id="comment" name="comment"
                                         label="Comment"
-                                        value="{{expense.comment}}"></paper-textarea>
+                                        value="{{task.comment}}"></paper-textarea>
                     </form>
                 </div>
             </div>
@@ -272,14 +274,20 @@
 
                 listeners: {
                     'iron-form-invalid': '_formInvalid',
-                    'delete-task':'deleteTask'
+                    'delete-task':'deleteTask',
+                    'iron-form-response':'_onsubmited'
                 },
-
+                _onsubmited: function(){
+                    console.log("Submit calls updated");
+                    this.fire('update-tasklist');
+                    this
+                },
                 _save: function () {
                     this.$.error.innerText = '';
                     var form = this.$.form;
                     form.submit();
                     this.opened = false;
+
 //                    if (form.validate()) {
 //
 //
@@ -291,7 +299,6 @@
                 },
                 open: function (task) {
                     this.opened = true;
-                    console.log(task);
                     this.task = task;
 //                    // Create a copy of the expense to be edited so we don't automatically flush changes to db
 //                    this.expense = JSON.parse(JSON.stringify(expense));
@@ -329,9 +336,11 @@
                         data: e.detail,
                         success: function(){
                             console.log("Deleted ");
-                        }
+                            this.fire('update-tasklist');
+                        }.bind(this)
                     });
                     this.opened = false;
+
                 },
                 _delete: function () {
                     this.fire('delete-task', this.task);

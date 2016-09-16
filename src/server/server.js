@@ -52,24 +52,41 @@ router.post('/tasks/add', function(req,res){
     //search in DB by ID
     var task=req.body;
     var returnDoc=null;
+    if(task._id==''){
+        task._id=new Date().getTime() + ''+Math.floor(Math.random()*1000);
+    }
+
     db.get(task._id)
     .then(function(doc) {
       //get all properties from task and put them to doc
-      returnDoc = db.put(doc);
+      db.put({
+          _id: doc._id,
+          _rev: doc._rev,
+          task: task.task,
+          started: task.started,
+          expectedEnd: task.expectedEnd,
+          comment: task.comment
+      }).then(function(response){
+          res.send(response)
+       }).catch(function (err){
+          res.end();
+        });
     }).catch(function (err) {
         if(err.status=='404') {
-            db.put(doc,
-                doc._id,
-                doc._rev
+            db.put({
+                    _id:task._id,
+                    task: task.task,
+                    started: task.started,
+                    expectedEnd: task.expectedEnd,
+                    comment: task.comment
+            }
             ).then(function(response){
-                returnDoc=response;
+                res.send(response)
             }).catch(function(err){
-                returnDoc=null;
-                console.log(err);
+                res.end;
             })
         }
     });
-    res.end();
 })
 
 //delete task

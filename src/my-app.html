@@ -27,6 +27,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="task-details.html">
 
+<script src="../bower_components/jquery/dist/jquery.js"></script>
 <dom-module id="my-app">
 
   <template>
@@ -84,13 +85,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     </style>
 
-    <iron-ajax
-            auto
-            url="http://test.test:3300/api/tasklist"
-            last-response="{{ajaxResponse}}"
-            debounce-duration="300"></iron-ajax>
-
-
     <app-location route="{{route}}"></app-location>
     <app-route
         route="{{route}}"
@@ -104,7 +98,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <app-drawer>
         <app-toolbar>Menu</app-toolbar>
         <paper-listbox on-iron-select="taskSelected">
-          <template is="dom-repeat" items="[[ajaxResponse]]">
+          <template is="dom-repeat" items="[[tasks]]">
             <paper-item id$={{item.doc._id}}>{{item.doc.task}}</paper-item>
           </template>
         </paper-listbox>
@@ -133,14 +127,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     Polymer({
 
       is: 'my-app',
-
+      listeners: {
+        'update-tasklist': 'updatetasklist'
+      },
       properties: {
-
+        tasks: {
+          type: Object
+        },
         page: {
           type: String,
           reflectToAttribute: true,
           observer: '_pageChanged'
         },
+
         taskid: {
           type:Number,
           value:"c6cbc8e6386a2fcb64c7c93b49000eb7"
@@ -148,6 +147,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       },
 
+      ready: function(e) {
+        console.log("Ready fired");
+        this.fire('update-tasklist', null);
+      },
+      updatetasklist: function(e) {
+        console.log("Update task called");
+        $.ajax({
+          url: 'http://test.test:3300/api/tasklist',
+          type: 'GET',
+          success: function(data){
+            this.tasks = data;
+          }.bind(this)
+        });
+
+      },
       taskSelected: function(target, e) {
         this.taskid= e.item.id;
       },
