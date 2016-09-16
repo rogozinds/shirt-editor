@@ -54,17 +54,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 color: #212121;
             }
         </style>
-        <iron-ajax id = "ajax_details"
+        <iron-ajax id = "ajax_response"
                 auto
-                url="http://localhost:3300/api/tasks/{{taskid}}}"
-                last-response="{{ajaxResponse}}"
+                url="http://localhost:3300/api/tasks/{{taskid}}"
+                last-response="{{task}}"
                 onResponse="handleResponse"
                 debounce-duration="100"></iron-ajax>
 
-        <h2>{{ajaxResponse.task}}</h2>
-        <vaadin-date-picker value={{ajaxResponse.started}}></vaadin-date-picker>
+        <h2>{{task.task}}</h2>
+        <vaadin-date-picker value={{task.started}}></vaadin-date-picker>
         <vaadin-date-picker
-                value={{ajaxResponse.expectedEnd}}></vaadin-date-picker>
+                value={{task.expectedEnd}}></vaadin-date-picker>
 
         <paper-fab icon="create" on-tap="_editTask"
                    id="edit-button"></paper-fab>
@@ -78,22 +78,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
             is: 'task-details',
             properties: {
-                taskid: {
-                    type: String
-                },
+//                taskid: {
+//                    type: String
+//                },
                 task: {
-                    type: Object,
-                    computed: 'computeTask(ajaxResponse)'
-                }
-            },
-            computeTask: function(ajaxResponse) {
-                console.log("Computed called");
-                var task = ajaxResponse;
-                if(task) {
-                    task._id = this.taskid;
-                    return task;
-                } else {
-                    return null;
+                    type: Object
                 }
             },
 

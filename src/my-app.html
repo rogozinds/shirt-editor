@@ -133,7 +133,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                         <div title>My App</div>
                     </app-toolbar>
                 </app-header>
-                <task-details taskId={{taskId}}></task-details>
+                <task-details taskid={{taskId}}></task-details>
             </app-header-layout>
 
         </app-drawer-layout>
@@ -149,7 +149,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             listeners: {
                 'update-tasklist': 'updatetasklist'
             },
-
             properties: {
                 tasks: {
                     type: Object
@@ -160,7 +159,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                     observer: '_pageChanged'
                 },
 
-                taskid: {
+                taskId: {
                     type: Number
                 }
 
@@ -172,15 +171,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             updatetasklist: function (e) {
                 this.$.ajax.generateRequest();
                 if (e.detail && e.detail.taskId != null) {
-                    this.taskid = e.detail.taskId;
+                    this.taskId = e.detail.taskId;
                 } else {
                     this.$.tasklist.selectIndex(0);
                 }
 
             },
-
             taskSelected: function (target, e) {
-                this.taskid = e.item.id;
+                this.taskId = e.item.id;
             },
             _routePageChanged: function (page) {
                 this.page = page || 'view1';
