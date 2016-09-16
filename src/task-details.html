@@ -78,12 +78,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
             is: 'task-details',
             properties: {
-//                taskid: {
-//                    type: String
-//                },
                 task: {
                     type: Object
-                }
+                },
+                notify: true
             },
 
             listeners: {
@@ -92,6 +90,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             },
             updateTask: function(e) {
                 this.$.ajax_details.generateRequest();
+            },
+            taskChanged: function(e) {
+                console.log("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
             },
             editTask: function (e) {
                 if (e && e.detail) {
