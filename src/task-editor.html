@@ -47,7 +47,7 @@
                 margin-bottom: 8px;
             }
             #task_id {
-                display:none;
+                /*display:none;*/
             }
             .buttons-layout {
                 display: flex;
@@ -279,8 +279,8 @@
                 },
                 _onsubmited: function(){
                     console.log("Submit calls updated");
-                    this.fire('update-tasklist');
-                    this
+                    this.fire('update-tasklist',{taskId: task._id});
+
                 },
                 _save: function () {
                     this.$.error.innerText = '';
@@ -336,14 +336,14 @@
                         data: e.detail,
                         success: function(){
                             console.log("Deleted ");
-                            this.fire('update-tasklist');
+                            this.fire('update-tasklist',{taskId: null});
                         }.bind(this)
                     });
                     this.opened = false;
 
                 },
                 _delete: function () {
-                    this.fire('delete-task', this.task);
+                    this.fire('delete-task');
                 }
             });
         })();

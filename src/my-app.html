@@ -10,13 +10,20 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/app-route/app-location.html">
 <link rel="import" href="../bower_components/app-route/app-route.html">
-<link rel="import" href="../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
-<link rel="import" href="../bower_components/app-layout/app-drawer/app-drawer.html">
-<link rel="import" href="../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
-<link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
-<link rel="import" href="../bower_components/app-layout/app-header-layout/app-header-layout.html">
-<link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
-<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import"
+      href="../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
+<link rel="import"
+      href="../bower_components/app-layout/app-drawer/app-drawer.html">
+<link rel="import"
+      href="../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
+<link rel="import"
+      href="../bower_components/app-layout/app-header/app-header.html">
+<link rel="import"
+      href="../bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import"
+      href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import"
+      href="../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../bower_components/iron-selector/iron-selector.html">
 <link rel="import" href="my-icons.html">
@@ -30,150 +37,160 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <script src="../bower_components/jquery/dist/jquery.js"></script>
 <dom-module id="my-app">
 
-  <template>
+    <template>
 
-    <style>
+        <style>
 
-      :host {
-        display: block;
-        --app-primary-color: #4285f4;
-        --app-secondary-color: black;
-      }
+            :host {
+                display: block;
+                --app-primary-color: #4285f4;
+                --app-secondary-color: black;
+            }
 
-      app-header {
-        background-color: var(--app-primary-color);
-        color: #fff;
-      }
-      app-header paper-icon-button {
-        --paper-icon-button-ink-color: white;
-      }
+            app-header {
+                background-color: var(--app-primary-color);
+                color: #fff;
+            }
 
-      .drawer-list {
-        margin: 0 20px;
-      }
-      .drawer-list a {
-        display: block;
-        padding: 0 16px;
-        line-height: 40px;
-        text-decoration: none;
-        color: var(--app-secondary-color);
-      }
-      .drawer-list a.iron-selected {
-        color: black;
-        font-weight: bold;
-      }
-      .drawer-list a.subroute {
-        padding-left: 32px;
-      }
+            app-header paper-icon-button {
+                --paper-icon-button-ink-color: white;
+            }
 
-      paper-item {
-        --paper-item: {
-          cursor: pointer;
-        };
-      }
+            .drawer-list {
+                margin: 0 20px;
+            }
 
-      .sublist {
-        padding-left: 20px;
-        padding-right: 20px;
+            .drawer-list a {
+                display: block;
+                padding: 0 16px;
+                line-height: 40px;
+                text-decoration: none;
+                color: var(--app-secondary-color);
+            }
 
-      }
-      #add-button {
-        right: 32px;
-        float:right;
-        z-index: 2;
-      }
+            .drawer-list a.iron-selected {
+                color: black;
+                font-weight: bold;
+            }
 
-    </style>
+            .drawer-list a.subroute {
+                padding-left: 32px;
+            }
 
-    <app-location route="{{route}}"></app-location>
-    <app-route
-        route="{{route}}"
-        pattern="/:page"
-        data="{{routeData}}"
-        tail="{{subroute}}"></app-route>
+            paper-item {
+                --paper-item: {
+                    cursor: pointer;
+                };
+            }
 
-    <app-drawer-layout fullbleed>
+            .sublist {
+                padding-left: 20px;
+                padding-right: 20px;
 
-      <!-- Drawer content -->
-      <app-drawer>
-        <app-toolbar>Menu</app-toolbar>
-        <paper-listbox on-iron-select="taskSelected">
-          <template is="dom-repeat" items="[[tasks]]">
-            <paper-item id$={{item.doc._id}}>{{item.doc.task}}</paper-item>
-          </template>
-        </paper-listbox>
-        <paper-fab icon="add" on-tap="_addNewTask" id="add-button"></paper-fab>
-      </app-drawer>
+            }
 
-      <!-- Main content -->
-      <app-header-layout has-scrolling-region>
+            #add-button {
+                right: 32px;
+                float: right;
+                z-index: 2;
+            }
 
-        <app-header condenses reveals effects="waterfall">
-          <app-toolbar>
-            <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
-            <div title>My App</div>
-          </app-toolbar>
-        </app-header>
-        <task-details taskId={{taskid}}></task-details>
-      </app-header-layout>
+        </style>
+        <iron-ajax id="ajax"
+                   auto
+                   url="http://test.test:3300/api/tasklist"
+                   last-response="{{tasks}}"
+                   debounce-duration="300"></iron-ajax>
+        <app-location route="{{route}}"></app-location>
+        <app-route
+                route="{{route}}"
+                pattern="/:page"
+                data="{{routeData}}"
+                tail="{{subroute}}"></app-route>
 
-    </app-drawer-layout>
+        <app-drawer-layout fullbleed>
+
+            <!-- Drawer content -->
+            <app-drawer>
+                <app-toolbar>Menu</app-toolbar>
+                <paper-listbox id="tasklist" on-iron-select="taskSelected">
+                    <template is="dom-repeat" items="[[tasks]]">
+                        <paper-item id$={{item.doc._id}}>{{item.doc.task}}
+                        </paper-item>
+                    </template>
+                </paper-listbox>
+                <paper-fab icon="add" on-tap="_addNewTask"
+                           id="add-button"></paper-fab>
+            </app-drawer>
+
+            <!-- Main content -->
+            <app-header-layout has-scrolling-region>
+
+                <app-header condenses reveals effects="waterfall">
+                    <app-toolbar>
+                        <paper-icon-button icon="menu"
+                                           drawer-toggle></paper-icon-button>
+                        <div title>My App</div>
+                    </app-toolbar>
+                </app-header>
+                <task-details taskId={{taskId}}></task-details>
+            </app-header-layout>
+
+        </app-drawer-layout>
 
 
-  </template>
+    </template>
 
-  <script>
+    <script>
 
-    Polymer({
+        Polymer({
 
-      is: 'my-app',
-      listeners: {
-        'update-tasklist': 'updatetasklist'
-      },
-      properties: {
-        tasks: {
-          type: Object
-        },
-        page: {
-          type: String,
-          reflectToAttribute: true,
-          observer: '_pageChanged'
-        },
+            is: 'my-app',
+            listeners: {
+                'update-tasklist': 'updatetasklist'
+            },
 
-        taskid: {
-          type:Number,
-          value:"c6cbc8e6386a2fcb64c7c93b49000eb7"
-        }
+            properties: {
+                tasks: {
+                    type: Object
+                },
+                page: {
+                    type: String,
+                    reflectToAttribute: true,
+                    observer: '_pageChanged'
+                },
 
-      },
+                taskid: {
+                    type: Number
+                }
 
-      ready: function(e) {
-        console.log("Ready fired");
-        this.fire('update-tasklist', null);
-      },
-      updatetasklist: function(e) {
-        console.log("Update task called");
-        $.ajax({
-          url: 'http://test.test:3300/api/tasklist',
-          type: 'GET',
-          success: function(data){
-            this.tasks = data;
-          }.bind(this)
+            },
+
+            ready: function (e) {
+                this.$.tasklist.selectIndex(0);
+            },
+            updatetasklist: function (e) {
+                this.$.ajax.generateRequest();
+                if (e.detail && e.detail.taskId != null) {
+                    this.taskid = e.detail.taskId;
+                } else {
+                    this.$.tasklist.selectIndex(0);
+                }
+
+            },
+
+            taskSelected: function (target, e) {
+                this.taskid = e.item.id;
+            },
+            _routePageChanged: function (page) {
+                this.page = page || 'view1';
+            },
+            _addNewTask: function () {
+                this.$$("task-details").fire('edit-task', null);
+            }
+
         });
 
-      },
-      taskSelected: function(target, e) {
-        this.taskid= e.item.id;
-      },
-      _routePageChanged: function(page) {
-        this.page = page || 'view1';
-      },
-      _addNewTask: function() {
-        this.$$("task-details").fire('edit-task', null);
-      }
-
-    });
-
-  </script>
+    </script>
 
 </dom-module>

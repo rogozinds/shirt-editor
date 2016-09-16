@@ -54,9 +54,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 color: #212121;
             }
         </style>
-        <iron-ajax id = "foo"
+        <iron-ajax id = "ajax_details"
                 auto
-                url="http://localhost:3300/api/tasks/{{taskid}}"
+                url="http://localhost:3300/api/tasks/{{taskid}}}"
                 last-response="{{ajaxResponse}}"
                 onResponse="handleResponse"
                 debounce-duration="100"></iron-ajax>
@@ -96,16 +96,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                     return null;
                 }
             },
-            handleResponse: function (e) {
 
-                console.log("FOOO");
-            },
             listeners: {
                 'edit-task': 'editTask',
                 'update-task':'updateTask'
             },
             updateTask: function(e) {
-                this.$.foo.generateRequest();
+                this.$.ajax_details.generateRequest();
             },
             editTask: function (e) {
                 if (e && e.detail) {
